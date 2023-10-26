@@ -5,9 +5,10 @@ import data from '../../fixtures/data/staticData.json'
 import { apis } from '../../support/pages/apis'
 import { faker } from '@faker-js/faker'
 
+const timeout: number = 6000
 const expectedURL: string = data.urls.app
-const newFolderName: string = faker.music.genre()
-const newFolderName2: string = faker.music.genre()
+const newFolderName: string = `${faker.music.genre()}${Math.floor(Math.random()*100)}`
+const newFolderName2: string = `${faker.commerce.productName()}${Math.floor(Math.random()*100)}`
 let foldersAssertion: Cypress.objectStructure ={
     folder1: '',
     folder2: '',
@@ -49,10 +50,10 @@ describe('Folder Creation and Initial Sharing',()=>{
             apis.apiFolderInterception().as('foldersInfo')
             drive.clickCreate(newFolderName)
             cy.wait('@foldersInfo').then((access:any)=>{
-                drive.grabParentIDandFolderName(access.response.body.result, newFolderName).then(()=>{
-                    API.folderName= Cypress.env('name')
-                    API.folderID= Cypress.env('folderID')
-                })
+                API.folderID= access.response.body.id
+                API.folderName = access.response.body.plain_name
+                expect(access.response.statusCode).to.equal(201)
+                expect(access.response.body.plain_name).to.equal(newFolderName)
             }) 
         })
         it('TC: 2 | Validate that the user can share the folder with another user as an editor',{ keystrokeDelay: 10 },()=>{
@@ -78,13 +79,16 @@ describe('Folder Creation and Initial Sharing',()=>{
             apis.apiFolderInterception().as('foldersInfo')
             drive.clickCreate(newFolderName2)
             cy.wait('@foldersInfo').then((access:any)=>{
-                drive.grabParentIDandFolderName(access.response.body.result, newFolderName2).then(()=>{
-                    API.folderName2= Cypress.env('name')
-                    API.folderID2= Cypress.env('folderID')
-                })
+                API.folderID2= access.response.body.id
+                API.folderName2 = access.response.body.plain_name
+                expect(access.response.statusCode).to.equal(201)
+                expect(access.response.body.plain_name).to.equal(newFolderName2)
             })
             drive.shareCreatedFolder(readerAccount,newFolderName2,data.assertion.invitationSentReader).then(()=>{
                 foldersAssertion.folder3= Cypress.env('folderName')
+            })
+            cy.wrap(API).then(()=>{
+                cy.log(API.folderID2, API.folderName2)
             })
         })
     })
@@ -123,10 +127,13 @@ describe('Folder Creation and Initial Sharing',()=>{
             cy.clearAllSessionStorage()
             apis.loginInterception().as('login')
             cy.Login(mainAccount, mainAccountPass)
-            cy.wait('@login').then((access: any)=>{
+            cy.wait('@login',{timeout: timeout}).then((access: any)=>{
                 API.newToken= access.response.body.newToken
-                apis.sendFolderToTrashAPI(API.newToken, API.folderID).then(response=> expect(response.status).to.equal(200))
-                apis.sendFolderToTrashAPI(API.newToken, API.folderID2).then(response=> expect(response.status).to.equal(200))
+                cy.wrap(API).then(()=>{
+                    apis.sendFolderToTrashAPI(API.newToken, API.folderID).then(response=> expect(response.status).to.equal(200))
+                    apis.sendFolderToTrashAPI(API.newToken, API.folderID2).then(response=> expect(response.status).to.equal(200))
+                })
+                
             })
             cy.reload()
         })

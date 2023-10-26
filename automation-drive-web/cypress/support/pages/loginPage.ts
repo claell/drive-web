@@ -28,4 +28,4 @@ class Login {
         this.logInButton().click()
     }
 }
-export const loginHelper = new Login()
+export const login = new Login()

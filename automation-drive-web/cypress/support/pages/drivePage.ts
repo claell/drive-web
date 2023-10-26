@@ -15,6 +15,7 @@ class Drive{
     buttonTextBefore: ()=> Cypress.Chainable<JQuery<HTMLElement>>;
     buttonTextAfter: ()=> Cypress.Chainable<JQuery<HTMLElement>>;
     inviteButtonWrapper:()=> Cypress.Chainable<JQuery<HTMLElement>>;
+    inviteButtonEmail:()=> Cypress.Chainable<JQuery<HTMLElement>>;
     manageAccessOption: ()=> Cypress.Chainable<JQuery<HTMLElement>>;
     downloadOption: ()=> Cypress.Chainable<JQuery<HTMLElement>>;
     optionsDisplayer: () => Cypress.Chainable<JQuery<HTMLElement>>;
@@ -36,6 +37,7 @@ class Drive{
     body:()=> Cypress.Chainable<JQuery<HTMLElement>>;
     rightClickOptions: () => Cypress.Chainable<JQuery<HTMLElement>>;
     menuItems: ()=> Cypress.Chainable<JQuery<HTMLElement>>;
+    renameOptionButton: ()=> Cypress.Chainable<JQuery<HTMLElement>>;
     nameNewFolderModal: () => Cypress.Chainable<JQuery<HTMLElement>>;
     newFolderModalTitle: () => Cypress.Chainable<JQuery<HTMLElement>>;
     newFolderNameInput: () => Cypress.Chainable<JQuery<HTMLElement>>;
@@ -56,7 +58,7 @@ class Drive{
     sharedPageButton:()=> Cypress.Chainable<JQuery<HTMLElement>>;
     editor_readerDropdown: ()=> Cypress.Chainable<JQuery<HTMLElement>>;
     readerOptionButton: ()=> Cypress.Chainable<JQuery<HTMLElement>>;
-
+    assertNewFolder:() => Cypress.Chainable<JQuery<HTMLElement>>;
 
     constructor(){
 
@@ -68,11 +70,12 @@ class Drive{
         this.accessTitle = ()=> cy.get('p[class="font-medium"]'),
         this.dropdown = ()=> cy.get('button[class$="text-gray-80 shadow-sm "]').last(),
         this.publicButton = ()=> cy.get('[class^="flex h-16 w-full cursor-pointer"]').first(),
-        this.restrictedButton = ()=> cy.get('[class^="flex h-16 w-full cursor-pointer"]').last(),
-        this.stopSharingButton = ()=> cy.get('[class^="flex h-11 w-full"]'),
+        this.restrictedButton = ()=> cy.contains('Restricted',{timeout:2000})
+        this.stopSharingButton = ()=> cy.get('button[class^="flex h-11 w-full"]'),
         this.buttonTextBefore = ()=> cy.get('button[class$="text-gray-80 shadow-sm "] span'),
         this.buttonTextAfter = ()=> cy.get('button[class$="text-gray-80 shadow-sm "] span').last(),
         this.inviteButtonWrapper=()=> cy.get('[class="flex items-center space-x-4"]'),
+        this.inviteButtonEmail=()=> cy.get('[class="flex items-center space-x-1.5"] button', {timeout:2000}),
         this.manageAccessOption=()=> cy.get('[class$="text-base text-gray-80"]').first(),
         this.downloadOption= ()=> cy.get('[class="flex cursor-pointer flex-row whitespace-nowrap px-4 py-1.5 text-base text-gray-80"]').eq(5),
         this.optionsDisplayer=()=> cy.get('[aria-labelledby="list-item-menu-button"]'),
@@ -107,8 +110,9 @@ class Drive{
         this.createNewFolder=()=> cy.get('[data-tooltip-id="createfolder-tooltip"]'),
         this.createNewFolderHeaderButton=()=> cy.get('[data-tooltip-id="createfolder-tooltip"]')
         this.newFolderModal= ()=> cy.get('[class^="w-full text-gray-100"]'),
+        
 
-        this.closeModalButton=()=> cy.get('[class="absolute right-0 m-7 flex w-auto text-white"]')
+        this.closeModalButton=()=> cy.get('[class="absolute right-0 m-7 flex w-auto text-white"]', {timeout:1000})
         this.rightClickOptions=()=> cy.get('[role="menu"]'),
         this.menuItems= () => cy.get('[role="menuitem"]')
         this.nameNewFolderModal=()=> cy.get('[class="flex flex-col space-y-5"]'),
@@ -133,14 +137,22 @@ class Drive{
             this.items().eq(number).click()
         })
     }
-    async selectRandomFolder(){
-        this.folders().then(el=>{
+    clickRandomFolder(){
+        return this.folders().then(el=>{
             const folders = el.length
             const number = Cypress._.random(0, folders -1)
-            this.folders().eq(number).click()
+            this.folders().eq(number).within(()=>{
+                this.folderNames().then((name)=>{
+                    const shared= name.text()
+                    return Cypress.env('sharedFolder', shared)
+                })
+            })
+            this.folders().eq(number).dblclick()
+            
         })
     }
     selectRandomFolderandRightClick(){
+        cy.wait(500)
         return this.folders().then(el=>{
             const folders = el.length
             const number = Cypress._.random(0, folders -1)
@@ -151,6 +163,7 @@ class Drive{
                     return Cypress.env('sharedFolder', shared)
                 })
             })
+            
             this.optionsDisplayer().within(()=>{
                 this.options().each(opts=>{
                     expect(opts.text()).to.exist
@@ -174,10 +187,21 @@ class Drive{
                 })
             })
     }  
+    selectFolderandDoubleClick(folder:string){
+        return this.folderNames().each(($fols, index)=>{
+            if($fols.text()===folder){
+                this.folders().eq(index).dblclick()
+                this.folderNames().eq(index).then((name)=>{
+                        return Cypress.env('folderName',name.text())
+                    })
+                }
+            })
+    } 
 
     //HERE THE FUNCTIONS RELATED TO THE RIGHT CLICK
     async clickonShareButtonOption(){
         this.shareButtonOption().click()
+        cy.wait(500)
     }
     async clickPermissionsDropdown(){
         this.accessWrapper().within(()=>{
@@ -186,7 +210,7 @@ class Drive{
         })
     }
     async clickRestrictedButtonOption(){
-        this.restrictedButton().click({force:true})
+        this.restrictedButton().should('be.enabled').click()
         this.buttonTextAfter()
     }
     async clickPublicButtonOption(){
@@ -222,9 +246,7 @@ class Drive{
     clickInviteButton(){
         this.inviteButtonWrapper().within(()=>{
             this.span().first().then(text=> expect(text.text()).to.exist)
-            this.button().should('be.enabled').and('have.text', 'Invite')
-            cy.wait(1000)
-            this.button().click()
+            this.inviteButtonEmail().should('be.enabled').and('have.text', 'Invite').click()
         })
     }
     async selectRandomItemAndRightClick(){
@@ -278,17 +300,8 @@ class Drive{
     }
     clickCreate(foldername:string){
         this.submitNewFolderName().should('exist').click()
-        cy.wait(2000)
-        this.folderNames().then(folds=>{
-            for(let i=0; i<=folds.length-1; i++){
-                this.folderNames().eq(i).then(name=>{
-                    if(name.text()===foldername)  
-                        this.folderNames().eq(i).then(name=>{
-                            expect(name.text()).to.exist
-                        })
-                })
-            }
-        })
+        cy.get(`[title="${foldername}"]`, {timeout:3000}).should('exist')
+        cy.wait(1000)
     }
     
     async clickCreateNewFolderHeader(){
@@ -300,7 +313,7 @@ class Drive{
         
     }
     writeInvitationEmail(email:string){  
-        cy.wait(2000)
+        cy.wait(1500)
         this.inviteOthersInput().should('not.be.disabled').type(email).focus().blur()
         
          this.inviteOthersInput().should('have.value', email) 
@@ -331,13 +344,6 @@ class Drive{
         this.deleteButton().click()
     }
     
-    async grabParentIDandFolderName(array:[],foldername:string){
-        for(let i=0; i<= array.length-1; i++){
-            if(array[i].plainName=== foldername){
-                return Cypress.env('name',array[i].plainName), Cypress.env('folderID',array[i].id)
-            }
-        }
-    }
     async createFolder(name:string){
         this.bodyRightClick()
         this.clickNewFolderOption()
@@ -360,6 +366,17 @@ class Drive{
             expect(Cypress.env('success')).to.equal(invitationSent)
             })
         })
+    }
+    clickOnEditorReaderDropdown(){
+        drive.editor_readerDropdown().click()
+    }
+    clickOnReaderOptionButton(){
+        drive.readerOptionButton().click()
+    }
+    clearSession(){
+        cy.clearAllCookies()
+        cy.clearAllSessionStorage()
+        cy.clearAllLocalStorage()
     }
 }
     

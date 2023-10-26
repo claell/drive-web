@@ -1,9 +1,10 @@
 {
     "urls": {
-      "app": "https://staging.drive.internxt.com/app"
+      "app": "https://drive.internxt.com/app"
     },
     "assertion":{
       "invitationSentReader": "Successful sharing with readeraccount@inxt.com",
-      "invitationSentEditor": "Successful sharing with testaccounteditor@inxt.com"
-    }
-  }
+      "invitationSentEditor": "Successful sharing with editoraccount@inxt.com"
+    },
+    "sharedFolder": "Music"
+}

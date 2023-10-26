@@ -23,6 +23,7 @@ declare namespace Cypress {
       folderName: string,
       newToken: string,
       folderID2:string,
-      folderName2: string
+      folderName2: string,
+      invitationID: string
   }
 }
