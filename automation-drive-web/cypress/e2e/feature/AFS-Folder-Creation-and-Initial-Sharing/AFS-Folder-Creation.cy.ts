@@ -33,7 +33,7 @@ describe('Folder Creation and Initial Sharing',()=>{
         
         beforeEach('Login In',()=>{
             apis.loginInterception().as('login')
-            cy.Login(mainAccount, password); 
+            cy.Login("mainaccount@inxt.com", "test123."); 
             cy.wait('@login').then((access: any)=>{
                 expect(access.response.statusCode).to.equal(200)
             })
@@ -100,7 +100,7 @@ describe('Folder Creation and Initial Sharing',()=>{
             cy.clearLocalStorage()
             cy.clearAllCookies()
             cy.clearAllSessionStorage()
-            cy.Login(readerAccount, password);
+            cy.Login("readeraccount@inxt.com", "test123.");
             
         })
         after('Deleting Folder Owner created',()=>{
@@ -108,7 +108,7 @@ describe('Folder Creation and Initial Sharing',()=>{
             cy.clearAllCookies()
             cy.clearAllSessionStorage()
             apis.loginInterception().as('login')
-            cy.Login(mainAccount,password)
+            cy.Login("mainaccount@inxt.com", "test123.")
             cy.wait('@login').then((access: any)=>{
                 API.newToken= access.response.body.newToken
                 apis.sendFolderToTrashAPI(API.newToken, API.folderID).then(response=> expect(response.status).to.equal(200))
