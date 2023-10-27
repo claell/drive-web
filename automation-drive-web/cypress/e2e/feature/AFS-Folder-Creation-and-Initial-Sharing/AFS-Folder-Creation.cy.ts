@@ -85,7 +85,7 @@ describe('Folder Creation and Initial Sharing',()=>{
             drive.clickPermissionsDropdown()
             drive.clickRestrictedButtonOption()
             drive.clickInviteButton()
-            drive.writeInvitationEmail(readerAccount)
+            drive.writeInvitationEmail('readeraccount@inxt.com')
             drive.editor_readerDropdown().click()
             drive.readerOptionButton().click()
             drive.clickInviteUser()
