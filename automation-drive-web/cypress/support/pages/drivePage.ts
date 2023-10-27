@@ -246,7 +246,8 @@ class Drive{
     clickInviteButton(){
         this.inviteButtonWrapper().within(()=>{
             this.span().first().then(text=> expect(text.text()).to.exist)
-            this.inviteButtonEmail().should('be.enabled').and('have.text', 'Invite').focus().click()
+            cy.wait(1000)
+            this.inviteButtonEmail().should('be.enabled').and('have.text', 'Invite').click()
         })
     }
     async selectRandomItemAndRightClick(){
