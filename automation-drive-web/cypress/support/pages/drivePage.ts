@@ -75,7 +75,7 @@ class Drive{
         this.buttonTextBefore = ()=> cy.get('button[class$="text-gray-80 shadow-sm "] span'),
         this.buttonTextAfter = ()=> cy.get('button[class$="text-gray-80 shadow-sm "] span').last(),
         this.inviteButtonWrapper=()=> cy.get('[class="flex items-center space-x-4"]'),
-        this.inviteButtonEmail=()=> cy.get('[class="flex items-center space-x-1.5"] button', {timeout:2000}),
+        this.inviteButtonEmail=()=> cy.get('button', {timeout:2000}),
         this.manageAccessOption=()=> cy.get('[class$="text-base text-gray-80"]').first(),
         this.downloadOption= ()=> cy.get('[class="flex cursor-pointer flex-row whitespace-nowrap px-4 py-1.5 text-base text-gray-80"]').eq(5),
         this.optionsDisplayer=()=> cy.get('[aria-labelledby="list-item-menu-button"]'),
@@ -246,7 +246,7 @@ class Drive{
     clickInviteButton(){
         this.inviteButtonWrapper().within(()=>{
             this.span().first().then(text=> expect(text.text()).to.exist)
-            this.inviteButtonEmail().should('be.enabled').and('have.text', 'Invite').click()
+            this.inviteButtonEmail().should('be.enabled').and('have.text', 'Invite').focus().click()
         })
     }
     async selectRandomItemAndRightClick(){

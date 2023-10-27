@@ -1,8 +1,8 @@
-import { apis } from '../../../support/pages/apis'
-import { drive } from '../../../support/pages/drivePage'
-import { shared } from '../../../support/pages/sharedPage'
-import data from '../../../fixtures/data/staticData.json'
-import { removeLogs } from '../../../support/utils/removeLogs'
+import { apis } from '../../support/pages/apis'
+import { drive } from '../../support/pages/drivePage'
+import { shared } from '../../support/pages/sharedPage'
+import data from '../../fixtures/data/staticData.json'
+import { removeLogs } from '../../support/utils/removeLogs'
 let timeout:number= 6000 
 let API: Cypress.folderInfoStructure ={
   folderID:'',
