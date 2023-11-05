@@ -98,18 +98,52 @@ class APIs{
                 headers:{
                   Authorization: `Bearer ${newToken}` 
                 }
-    
               }).then((response:any)=>{
                 const folders= response.body.folders
                 for(let i=0; i<=folders.length-1; i++){
-                    
                     if(response.body.folders[i].plainName===foldername){
-                     return Cypress.env('folderUUID', response.body.folders[i].uuid)
+                        return Cypress.env('folderUUID',response.body.folders[i].uuid)
                     }
                 }
               })
         }
-
+        getContainedFolderUuid(newtoken:string, folderuuid:string, foldername:string){
+            return cy.request({
+                url:`https://api.internxt.com/drive/sharings/items/${folderuuid}/folders?token=&page=0&perPage=15`,
+                method: 'GET',
+                headers:{
+                    Authorization: `Bearer ${newtoken}`
+                }
+            }).then((response:any)=>{
+                const folders= response.body.items
+                for(let i=0; i<=folders.length-1; i++){
+                    if(response.body.items[i].plainName===foldername){
+                        return Cypress.env('folderUUID',response.body.items[i].uuid)
+                    }
+                }
+            })
+        }
+        getFilesToken(folderuuid2:string, newtoken:string){
+            return cy.request({
+                url: `https://api.internxt.com/drive/sharings/items/${folderuuid2}/files?token=&page=0&perPage=15`,
+                method: 'GET',
+                headers:{
+                    Authorization: `Bearer ${newtoken}`
+                }
+            }).then((response:any)=>{
+                return response
+            })
+        }
+        getFileID(newtoken:string, folderuuid2:string, token:string){
+            return cy.request({
+                url:`https://api.internxt.com/drive/sharings/items/${folderuuid2}/files?token=${newtoken}&page=0&perPage=15`,
+                method: 'GET',
+                headers:{
+                    Authorization: `Bearer ${newtoken}`,
+                }
+        }).then((response:any)=>{
+            cy.log(response)
+        })
     }   
-
+}
     export const apis = new APIs()

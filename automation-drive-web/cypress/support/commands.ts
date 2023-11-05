@@ -1,17 +1,44 @@
 import { login } from '../../cypress/support/pages/loginPage';
 require('cypress-downloadfile/lib/downloadFileCommand');
+import { apis } from '../../cypress/support/pages/apis'; 
+require('cy-verify-downloads').addCustomCommand();
+require('cypress-delete-downloads-folder').addCustomCommand();
 //
 // -- This is a parent command --
 // Cypress.Commands.add('login', (email, password) => { ... })
-Cypress.Commands.add('Login', (email, password) => {
-  //cy.session('Login',()=>{
-  cy.visit('/');
-  email && login.writeEmail(email);
-  password && login.writePassword(password);
-  login.clickSignIn();
+Cypress.Commands.add('SessionLogin', (email, password) => {
   
-  //})
+  cy.session('SessionLogin',()=>{
+    apis.loginInterception().as('login')
+    cy.visit('/');
+    email && login.writeEmail(email);
+    password && login.writePassword(password);
+    login.clickSignIn();
+    cy.wait('@login').then((access: any)=>{
+      expect(access.response.statusCode).to.equal(200)
+      window.localStorage.setItem('authToken', access.response.body.newToken)
+      return access
+    })
+  })
 });
+
+Cypress.Commands.add('Login', (email, password) => {
+
+    apis.loginInterception().as('login')
+    cy.visit('/');
+    email && login.writeEmail(email);
+    password && login.writePassword(password);
+    login.clickSignIn();
+    cy.wait('@login').then((access: any)=>{
+      expect(access.response.statusCode).to.equal(200)
+      return access
+    })
+});
+
+
+
+
+
 
 //
 // -- This is a child command --

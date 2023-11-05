@@ -10,8 +10,9 @@ declare namespace Cypress {
      * @param password Password to sign in into the app
      */
     Login(email: string, password: string) 
-
+    SessionLogin(email: string, password: string)
   }
+  
   interface objectStructure {
     folder1: string,
     folder2: string,
@@ -21,9 +22,16 @@ declare namespace Cypress {
   interface folderInfoStructure {
       folderID: string,
       folderName: string,
+      token: string,
       newToken: string,
       folderID2:string,
       folderName2: string,
-      invitationID: string
+      invitationID: string,
+      originalFolderName:string,
+      newFolderName:string
+  }
+  interface itemStructure{
+    originalItemName: string,
+    newItemName: string,
   }
 }

@@ -14,35 +14,29 @@ let foldersAssertion: Cypress.objectStructure ={
     folder3: '',
     folder4:''
 }
+let folder:string;
 let API: Cypress.folderInfoStructure ={
     folderID:'',
     folderName:'',
+    token:'',
     newToken:'',
     folderID2:'',
     folderName2:'',
-    invitationID:''
-}
-const mainAccount:string= Cypress.env('MAIN_ACCOUNT')
-const readerAccount: string = Cypress.env('READER_ACCOUNT')
-const password: string = Cypress.env('PASSWORD')
-
+    invitationID:'',
+    originalFolderName:'',
+    newFolderName:'',
+  }
 
 describe('Folder Creation and Initial Sharing',()=>{
     
     describe('User creates a new folder and shares it with another user',()=>{
-        
         beforeEach('Login In',()=>{
-            apis.loginInterception().as('login')
-            cy.Login("mainaccount@inxt.com", "test123."); 
-            cy.wait('@login').then((access: any)=>{
-                expect(access.response.statusCode).to.equal(200)
-            })
+            cy.SessionLogin( Cypress.env('mainAccount'), Cypress.env('password') );
+             cy.visit('/app')
          })
          it('TC: 1 | Validate that the user can create a new folder with right click option',()=>{
             
-            
             cy.url().should('equal', expectedURL)
-            drive.closeModal()
             drive.bodyRightClick()
             drive.clickNewFolderOption()
             drive.clearInputField()
@@ -60,7 +54,6 @@ describe('Folder Creation and Initial Sharing',()=>{
         it('TC: 2 | Validate that the user can create a folder with the header option',{ keystrokeDelay: 10 },()=>{
             
             cy.url().should('equal', expectedURL)
-            drive.closeModal()
             drive.clickCreateNewFolderHeader()
             drive.clearInputField()
             drive.writeNewFolderName(folderName2)
@@ -75,10 +68,9 @@ describe('Folder Creation and Initial Sharing',()=>{
         })
             
         it('TC: 3 | Validate that the user can share the folder with another user as a reader',{ keystrokeDelay: 10 },()=>{
-            
+
             cy.url().should('equal', expectedURL)
-            drive.closeModal()
-            drive.selectFolderandRightClick(folderName).then(()=>{
+            drive.selectFolderandRightClick(folderName2).then(()=>{
                 foldersAssertion.folder1=Cypress.env('folderName')
             })
             drive.clickonShareButtonOption()
@@ -95,23 +87,24 @@ describe('Folder Creation and Initial Sharing',()=>{
         })
     })
     describe('User creates a new folder and shares it with another user.',()=>{
+
         before('Login In in reader account',()=>{
-            cy.clearLocalStorage()
-            cy.clearAllCookies()
-            cy.clearAllSessionStorage()
-            cy.Login("readeraccount@inxt.com", "test123.");
             
+            Cypress.session.clearCurrentSessionData()
+            Cypress.session.clearAllSavedSessions()
+            cy.Login( Cypress.env('readerAccount'), Cypress.env('password') );
+            cy.visit('/app')
         })
         after('Deleting Folder Owner created',()=>{
-            cy.clearLocalStorage()
-            cy.clearAllCookies()
-            cy.clearAllSessionStorage()
-            apis.loginInterception().as('login')
-            cy.Login("mainaccount@inxt.com", "test123.")
-            cy.wait('@login').then((access: any)=>{
+            
+            Cypress.session.clearCurrentSessionData()
+            Cypress.session.clearAllSavedSessions()
+            cy.Login( Cypress.env('mainAccount'), Cypress.env('password') ).then((access:any)=>{
                 API.newToken= access.response.body.newToken
-                apis.sendFolderToTrashAPI(API.newToken, API.folderID).then(response=> expect(response.status).to.equal(200))
-                apis.sendFolderToTrashAPI(API.newToken, API.folderID2).then(response=> expect(response.status).to.equal(200))
+                cy.wrap(API).then(()=>{
+                    apis.sendFolderToTrashAPI(API.newToken, API.folderID).then(response=> expect(response.status).to.equal(200))
+                    apis.sendFolderToTrashAPI(API.newToken, API.folderID2).then(response=> expect(response.status).to.equal(200))
+                })
             })
             cy.reload()
         })
@@ -119,10 +112,9 @@ describe('Folder Creation and Initial Sharing',()=>{
         it('TC: 4 | Verify that the shared folder appears in the recipients shared folder list.',()=>{
             
             cy.url().should('equal', expectedURL)
-            drive.closeModal()
             drive.clickSharedPageButton()
             shared.clickPendingInvitationsButton()
-            shared.acceptSharingInvitation(folderName).then(()=>{
+            shared.acceptSharingInvitation(folderName2).then(()=>{
                 foldersAssertion.folder2= Cypress.env('folderAssertion')
             })
             cy.wrap(foldersAssertion).then(()=>{

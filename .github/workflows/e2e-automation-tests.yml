@@ -46,3 +46,8 @@ jobs:
                 working-directory: automation-drive-web
                 browser: chrome
                 command: yarn file "cypress/e2e/feature/AFS-Folder-Creation-and-Initial-Sharing/AFS-Folder-Creation.cy.ts"
+              env:
+                TESTING_MAINACCOUNT: ${{ secrets.TESTING_MAINACCOUNT }}
+                TESTING_EDITORACCOUNT: ${{ secrets.TESTING_EDITORACCOUNT }}
+                TESTING_READERACCOUNT: ${{ secrets.TESTING_READERACCOUNT }}
+                TESTING_PASSWORD: ${{ secrets.TESTING_PASSWORD }}   

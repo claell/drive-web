@@ -86,7 +86,7 @@ class Drive{
         this.inviteOthersTitle=()=> cy.get('[class="flex items-center space-x-4"]')
         this.inviteOthersInput=()=> cy.get('[class="m flex w-full"] input', {timeout: 2000})
         this.inviteButton=()=> cy.get('[class$="text-white shadow-sm "]').last()
-        this.invitationSentSuccessSign=()=> cy.get('[class="flex-1 whitespace-pre break-words text-gray-80 line-clamp-2"]', {timeout: 2000})
+        this.invitationSentSuccessSign=()=> cy.get('[class="flex-1 whitespace-pre break-words text-gray-80 line-clamp-2"]', {timeout: 5000})
         this.readerEditorDropdown=()=> cy.get('[name=userRole]')
         this.notifyUsersWrapper=()=> cy.get('[class^="mt-2.5"]')
         this.notifyUsersTitle=()=> cy.get('[class="ml-2 text-base font-medium"]')
@@ -375,6 +375,7 @@ class Drive{
         drive.readerOptionButton().click()
     }
     clearSession(){
+        cy.clearLocalStorage()
         cy.clearAllCookies()
         cy.clearAllSessionStorage()
         cy.clearAllLocalStorage()

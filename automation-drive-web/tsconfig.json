@@ -2,7 +2,7 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "esModuleInterop": true,
-      "types": ["cypress", "node"],
+      "types": ["cypress", "node", "cy-verify-downloads", "cypress-delete-downloads-folder"],
       "paths": {
           "@pages/*": ["./cypress/support/pages/*"],
           "@data/*": ["./cypress/fixtures/data/*"],

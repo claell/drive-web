@@ -22,7 +22,7 @@ class Login {
     }
     async writePassword(password: string){
         this.passwordTitle().should('have.text', 'Password')
-        this.passwordInputForm().type(password)
+        this.passwordInputForm().type(password, {log: false})
     }
     async clickSignIn(){
         this.logInButton().click()

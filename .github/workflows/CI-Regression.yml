@@ -1,65 +1,65 @@
 name: Drive Web CI Regression
 
-on: [push]
+on:
+  pull_request:
+  schedule:
+    - cron: '*/30 * * * *'
 
 jobs:
-    Build-Cypress-TestSuite-AfterPush:
-        runs-on: ubuntu-latest
-        strategy:
-          matrix:
-            node-version: [14.x]
+  Build-Cypress-TestSuite-AfterPush:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
 
-        steps:
-            - name: Checkout 💿
-              uses: actions/checkout@v3
+    steps:
+      - name: Checkout 💿
+        uses: actions/checkout@v3
 
-            - name: Set Working Directory
-              run: cd automation-drive-web
-              
+      - name: Set Working Directory
+        run: cd automation-drive-web
 
-            - name: Install Node.js 💿
-              uses: actions/setup-node@v3
-              with:
-                node-version: 16
-                registry-url: 'https://npm.pkg.github.com'
+      - name: Install Node.js 💿
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: 'https://npm.pkg.github.com'
 
-            - name: Set Working Directory
-              run: cd automation-drive-web
+      - name: Set Working Directory
+        run: cd automation-drive-web
 
-            - run: echo "registry=https://registry.yarnpkg.com/" > .npmrc
-            - run: echo "@internxt:registry=https://npm.pkg.github.com" >> .npmrc
+      - run: echo "registry=https://registry.yarnpkg.com/" > .npmrc
+      - run: echo "@internxt:registry=https://npm.pkg.github.com" >> .npmrc
 
-            - run: echo //npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }} >> .npmrc
-            - run: echo "always-auth=true" >> .npmrc
+      - run: echo //npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }} >> .npmrc
+      - run: echo "always-auth=true" >> .npmrc
 
-            - name: Install All Dependencies 💿
-              run: |
-                  cd automation-drive-web
-                  yarn
+      - name: Install All Dependencies 💿
+        run: |
+          cd automation-drive-web
+          yarn
 
-            - name: Cypress Run 🧪
-              uses: cypress-io/github-action@v6
-              with:
-                working-directory: automation-drive-web
-                browser: edge
-                command: yarn regression
-            
-            - name: Uploading Artifact 📈
-              uses: actions/upload-artifact@v3.1.3
-              if: always()
-              with:
-                name: cypress-execution-report
-                path: cypress/reports/html
-                retention-days: 30
+      - name: Cypress Run 🧪
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: automation-drive-web
+          browser: edge
+          command: yarn regression
+        env:
+          TESTING_MAINACCOUNT: ${{ secrets.TESTING_MAINACCOUNT }}
+          TESTING_EDITORACCOUNT: ${{ secrets.TESTING_EDITORACCOUNT }}
+          TESTING_READERACCOUNT: ${{ secrets.TESTING_READERACCOUNT }}
+          TESTING_PASSWORD: ${{ secrets.TESTING_PASSWORD }}
 
-            - name: Set Working Directory
-              run: cd automation-drive-web
+      - name: Set Working Directory
+        run: cd automation-drive-web
 
-            - name: Slack Notification 🚀
-              uses: rtCamp/action-slack-notify@v2
-              env:
-                SLACK_WEBHOOK: https://hooks.slack.com/services/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
-                SLACK_USERNAME: Zebass Z
-                SLACK_TITLE: Regression running!
-                SLACK_MESSAGE: It seems we have new changes 🤜
-                SLACK_COLOR: ${{job.status}}
+      - name: Slack Notification 🚀
+        uses: rtCamp/action-slack-notify@v2
+        if: failure()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_WEB_TEAM_MONITORING }}
+          SLACK_USERNAME: Sebastian Avila
+          SLACK_TITLE: Regression failed!
+          SLACK_MESSAGE: The regression tests have failed
+          SLACK_COLOR: 'danger'

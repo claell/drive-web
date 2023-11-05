@@ -8,11 +8,12 @@
   "scripts": {
     "test": "cypress open",
     "regression": "cypress run --browser edge --key c635d3f7-b323-4e3b-bcf4-722c1484fd18 --spec cypress/e2e/feature/AFS-Folder-Creation-and-Initial-Sharing/**.cy.ts",
-    "file": "cypress run --browser edge --key c635d3f7-b323-4e3b-bcf4-722c1484fd18 --spec cypress/e2e/feature/AFS-Folder-Creation-and-Initial-Sharing/AFS-Folder-Creation.cy.ts"
+    "file": "cypress run --browser edge --key c635d3f7-b323-4e3b-bcf4-722c1484fd18 --spec cypress/e2e/feature/AFS-Folder-Creation-and-Initial-Sharing/AFS-Permission-Levels.cy.ts"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.1.0",
     "@types/node": "^20.8.0",
+    "cy-verify-downloads": "^0.2.2",
     "cypress": "^13.2.0",
     "cypress-dotenv": "^2.0.0",
     "cypress-downloadfile": "^1.2.3",
@@ -25,6 +26,8 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.22.15",
+    "cypress-delete-downloads-folder": "^0.0.4",
+    "fs": "^0.0.1-security",
     "typescript": "^5.2.2"
   }
 }

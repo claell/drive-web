@@ -616,6 +616,16 @@ csstype@^3.1.1:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.1.2.tgz#1d4bf9d572f11c14031f0436e1c10bc1f571f50b"
   integrity sha512-I7K1Uu0MBPzaFKg4nI5Q7Vs2t+3gWWW648spaF+Rg7pI9ds18Ugn+lvg4SHczUdKlHI5LWBXyqfS8+DufyBsgQ==
 
+cy-verify-downloads@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/cy-verify-downloads/-/cy-verify-downloads-0.2.2.tgz#c5eb96724f1abdaf3456a3ca5669030be52da01c"
+  integrity sha512-Cr4U38xg5z8AK8XiYuEcbAy1rfgtkZTdUFTWkG5NM+BxKSjRlpGt6LpylLpHp9B6ikKCBPotpeewW7fOuBFKlA==
+
+cypress-delete-downloads-folder@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/cypress-delete-downloads-folder/-/cypress-delete-downloads-folder-0.0.4.tgz#00693d4d7a36b552e7a11148e49d2c4c34ed3ec3"
+  integrity sha512-0zix5YIROeMHCrCGQVmMP+jUL3KtKliAs1msSnHCPwkX8rNL4DioI8UHvbBVVghWA3vxWN6GCtV1qW+5DHi9Bg==
+
 cypress-dotenv@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/cypress-dotenv/-/cypress-dotenv-2.0.0.tgz#ed77f232de7473c0c29f997fa8ff8b00faa5be2f"
@@ -948,6 +958,11 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
+
+fs@^0.0.1-security:
+  version "0.0.1-security"
+  resolved "https://registry.yarnpkg.com/fs/-/fs-0.0.1-security.tgz#8a7bd37186b6dddf3813f23858b57ecaaf5e41d4"
+  integrity sha512-3XY9e1pP0CVEUCdj5BmfIZxRBTSDycnbqhIOGec9QYtmVH2fbLpj86CFWkrNOkt/Fvty4KZG5lTglL9j/gJ87w==
 
 fsu@^1.1.1:
   version "1.1.1"
