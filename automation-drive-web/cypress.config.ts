@@ -49,5 +49,4 @@ const config = defineConfig({
     password: process.env.TESTING_PASSWORD
   }
 });
-
 export default config;

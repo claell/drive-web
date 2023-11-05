@@ -12,7 +12,6 @@ declare namespace Cypress {
     Login(email: string, password: string) 
     SessionLogin(email: string, password: string)
   }
-  
   interface objectStructure {
     folder1: string,
     folder2: string,

@@ -124,7 +124,6 @@ describe("Permission Levels", () => {
         })
       });
     })
-    
       describe("User shares a folder with different permissions", () => {
 
         beforeEach('Login In',()=>{  

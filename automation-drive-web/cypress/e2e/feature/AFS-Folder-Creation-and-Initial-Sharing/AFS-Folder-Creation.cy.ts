@@ -87,7 +87,6 @@ describe('Folder Creation and Initial Sharing',()=>{
         })
     })
     describe('User creates a new folder and shares it with another user.',()=>{
-
         before('Login In in reader account',()=>{
             
             Cypress.session.clearCurrentSessionData()

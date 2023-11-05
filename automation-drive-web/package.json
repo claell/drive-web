@@ -6,7 +6,7 @@
   "repository": "https://github.com/internxt/drive-web",
   "license": "MIT",
   "scripts": {
-    "test": "cypress open",
+    "test":  "cypress open",
     "regression": "cypress run --browser edge --key c635d3f7-b323-4e3b-bcf4-722c1484fd18 --spec cypress/e2e/feature/AFS-Folder-Creation-and-Initial-Sharing/**.cy.ts",
     "file": "cypress run --browser edge --key c635d3f7-b323-4e3b-bcf4-722c1484fd18 --spec cypress/e2e/feature/AFS-Folder-Creation-and-Initial-Sharing/AFS-Permission-Levels.cy.ts"
   },
