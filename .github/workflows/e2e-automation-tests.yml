@@ -11,6 +11,9 @@ jobs:
         strategy:
           matrix:
             node-version: [14.x]
+            
+        environment:
+          name: test    
 
         steps:
             - name: Checkout
@@ -45,7 +48,7 @@ jobs:
               with:
                 working-directory: automation-drive-web
                 browser: chrome
-                command: yarn file "cypress/e2e/feature/AFS-Folder-Creation-and-Initial-Sharing/AFS-Permission-Levels.cy.ts"
+                command: yarn file "cypress/e2e/feature/AFS-Folder-Creation-and-Initial-Sharing/AFS-Folder-Creation.cy.ts"
               env:
                 TESTING_MAINACCOUNT: ${{ secrets.TESTING_MAINACCOUNT }}
                 TESTING_EDITORACCOUNT: ${{ secrets.TESTING_EDITORACCOUNT }}
