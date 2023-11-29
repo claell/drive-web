@@ -137,11 +137,12 @@ const ShareInviteDialog = (props: ShareInviteDialogProps): JSX.Element => {
         ),
       );
     });
+
     const trackingRestrictedSharedProperties: TrackingPlan.RestrictedSharedProperties = {
-      is_folder: props.itemToShare.item.isFolder,
+      is_folder: props.itemToShare?.isFolder || false,
       share_type: 'private',
-      user_id: props.itemToShare.item.userId,
-      item_id: props.itemToShare.item.id,
+      user_id: props.itemToShare?.userId,
+      item_id: props.itemToShare?.id,
       invitations_send: 1,
     };
 
