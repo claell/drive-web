@@ -37,6 +37,7 @@ describe('Folder Creation and Initial Sharing',()=>{
          it('TC: 1 | Validate that the user can create a new folder with right click option',()=>{
             
             cy.url().should('equal', expectedURL)
+            drive.closeModal2()
             drive.bodyRightClick()
             drive.clickNewFolderOption()
             drive.clearInputField()
@@ -53,7 +54,9 @@ describe('Folder Creation and Initial Sharing',()=>{
         })
         it('TC: 2 | Validate that the user can create a folder with the header option',{ keystrokeDelay: 10 },()=>{
             
+            
             cy.url().should('equal', expectedURL)
+            drive.closeModal2()
             drive.clickCreateNewFolderHeader()
             drive.clearInputField()
             drive.writeNewFolderName(folderName2)
@@ -70,6 +73,7 @@ describe('Folder Creation and Initial Sharing',()=>{
         it('TC: 3 | Validate that the user can share the folder with another user as a reader',{ keystrokeDelay: 10 },()=>{
 
             cy.url().should('equal', expectedURL)
+            drive.closeModal2()
             drive.selectFolderandRightClick(folderName2).then(()=>{
                 foldersAssertion.folder1=Cypress.env('folderName')
             })
@@ -111,6 +115,7 @@ describe('Folder Creation and Initial Sharing',()=>{
         it('TC: 4 | Verify that the shared folder appears in the recipients shared folder list.',()=>{
             
             cy.url().should('equal', expectedURL)
+            drive.closeModal2()
             drive.clickSharedPageButton()
             shared.clickPendingInvitationsButton()
             shared.acceptSharingInvitation(folderName2).then(()=>{

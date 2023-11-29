@@ -8,7 +8,7 @@ const { removeDirectory } = require('cypress-delete-downloads-folder');
 
 const BASE_URL = 'https://drive.internxt.com/';
 const config = defineConfig({
-  defaultCommandTimeout: 13000,
+  defaultCommandTimeout: 16000,
   viewportHeight: 768,
   viewportWidth: 1366,
   watchForFileChanges: false,

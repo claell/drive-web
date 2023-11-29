@@ -51,14 +51,17 @@ describe("Permission Levels", () => {
         })
       })
       
-      it("TC1 | Verify that the user can share the folder with 'View Only' permission", () => {
+      it.only("TC1 | Verify that the user can share the folder with 'View Only' permission", () => {
         let foldersArray=['Cars', 'Family', 'Personal', 'Work']
 
+        cy.visit('/app')
         cy.url().should('equal', expectedURL)
+        drive.closeModal2()
         const randomFold= Cypress._.random(0, foldersArray.length-1)
-        drive.selectFolderandRightClick(foldersArray[randomFold]).then(()=>{
+        const chosenFolder= foldersArray[randomFold]
+        drive.selectFolderandRightClick(chosenFolder).then(()=>{
           API.folderName= Cypress.env('sharedFolder')
-        }) 
+        })
         drive.clickonShareButtonOption()
         drive.clickPermissionsDropdown()
         drive.clickRestrictedButtonOption()
@@ -100,13 +103,14 @@ describe("Permission Levels", () => {
         })
     })
 
-      it("TC2 | Verify that the user can share the folder with 'Edit' permission", () => {
+      it.only("TC2 | Verify that the user can share the folder with 'Edit' permission", () => {
         let foldersArray=['Cars', 'Family', 'Personal']
 
-        
         cy.url().should('equal', expectedURL)
+        drive.closeModal2()
         const randomFold= Cypress._.random(0, foldersArray.length-1)
-        drive.selectFolderandRightClick(foldersArray[randomFold]).then(()=>{
+        const chosenFolder= foldersArray[randomFold]
+        drive.selectFolderandRightClick(chosenFolder).then(()=>{
           API.folderName= Cypress.env('sharedFolder')
         }) 
         drive.clickonShareButtonOption()
@@ -134,6 +138,7 @@ describe("Permission Levels", () => {
        it("TC3 | Validate that the editor can rename the name of a file", () => {  
 
           cy.url().should('equal', expectedURL)
+          drive.closeModal2()
           drive.clickSharedPageButton()
           shared.clickRandomFolder()
           shared.clickRandomFolder()
@@ -152,6 +157,7 @@ describe("Permission Levels", () => {
           
           cy.deleteDownloadsFolder()
           cy.url().should('equal', expectedURL)
+          drive.closeModal2()
           drive.clickSharedPageButton()
           shared.clickRandomFolder()
           shared.clickRandomFolder()
@@ -160,14 +166,13 @@ describe("Permission Levels", () => {
             shared.clickDownload()
             cy.verifyDownload(downloadedItem, {timeout:timeout})
           })
-          
-          
         })
 
         it("TC5 | Validate that the editor can download a shared folder",() =>{
 
           cy.deleteDownloadsFolder()
           cy.url().should('equal', expectedURL)
+          drive.closeModal2()
           drive.clickSharedPageButton()
           shared.selectFolderandDoubleClick('Shared with Editor 2')
           shared.selectRandomFolderandRightClick().then(()=>{

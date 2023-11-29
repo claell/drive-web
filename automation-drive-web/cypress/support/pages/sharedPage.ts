@@ -39,7 +39,7 @@ class Shared{
         this.options= ()=> cy.get('span:not(.ml-5)'),
 
         //RENAME MODAL
-        this.renameOptionButton=()=> cy.get('[role=none]').eq(3)
+        this.renameOptionButton=()=> cy.get('[role=none]').eq(4)
         this.renameModal=()=> cy.get('[class="flex flex-col space-y-5"]')
         this.anytext=()=> cy.get('p')
         this.inputTitle=()=> cy.get('[class="text-sm text-gray-80"]')
@@ -48,8 +48,8 @@ class Shared{
         this.inputField=()=> cy.get('[class="relative"]')
 
         //DOWNLOAD
-        this.downloadOptionButtonEditor=()=> cy.get('[role=none]').eq(5)
-        this.downloadFolderOptionButtonEditor=()=> cy.get('div[role="menuitem"]').eq(1)
+        this.downloadOptionButtonEditor=()=> cy.get('[role=none]').eq(6)
+        this.downloadFolderOptionButtonEditor=()=> cy.get('div[role="menuitem"]').eq(5)
 
         //SHARED FOLDER LIST
         this.sharedFolders=()=> cy.get('[class$="focus-within:bg-gray-1 hover:bg-gray-1"]')
@@ -91,7 +91,7 @@ class Shared{
             })
     }
     selectFolderandRightClick(folder:string){
-        cy.wait(500)
+        
         return this.folderNames().each(($fols, index)=>{
             if($fols.text()===folder){
                 this.folders().eq(index).rightclick()

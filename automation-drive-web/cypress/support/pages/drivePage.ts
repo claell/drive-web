@@ -10,6 +10,7 @@ class Drive{
     accessTitle: ()=> Cypress.Chainable<JQuery<HTMLElement>>;
     dropdown: ()=> Cypress.Chainable<JQuery<HTMLElement>>;
     publicButton: ()=> Cypress.Chainable<JQuery<HTMLElement>>;
+    generalAccessOptions:()=> Cypress.Chainable<JQuery<HTMLElement>>;
     restrictedButton: () => Cypress.Chainable<JQuery<HTMLElement>>;
     stopSharingButton: ()=> Cypress.Chainable<JQuery<HTMLElement>>;
     buttonTextBefore: ()=> Cypress.Chainable<JQuery<HTMLElement>>;
@@ -33,6 +34,7 @@ class Drive{
     createNewFolder: () => Cypress.Chainable<JQuery<HTMLElement>>;
     newFolderModal: () => Cypress.Chainable<JQuery<HTMLElement>>;
     closeModalButton:() => Cypress.Chainable<JQuery<HTMLElement>>;
+    closeModalButton2:() => Cypress.Chainable<JQuery<HTMLElement>>;
     closeShareOptions: () => Cypress.Chainable<JQuery<HTMLElement>>;
     body:()=> Cypress.Chainable<JQuery<HTMLElement>>;
     rightClickOptions: () => Cypress.Chainable<JQuery<HTMLElement>>;
@@ -62,6 +64,7 @@ class Drive{
 
     constructor(){
 
+        this.closeModalButton2=()=> cy.get('[class="absolute right-0 m-5 flex w-auto text-white"]')
         this.deleteButton=()=> cy.get('[data-tooltip-id="trash-tooltip"]')
         this.uploadFilesButton= () => cy.get('button[class$="border-opacity-75"]'),
         this.items = ()=> cy.get('[data-test="file-list-folder"]'),
@@ -70,6 +73,7 @@ class Drive{
         this.accessTitle = ()=> cy.get('p[class="font-medium"]'),
         this.dropdown = ()=> cy.get('button[class$="text-gray-80 shadow-sm "]').last(),
         this.publicButton = ()=> cy.get('[class^="flex h-16 w-full cursor-pointer"]').first(),
+        this.generalAccessOptions=()=> cy.get('[class$="scale-100 opacity-100"]',{timeout:1000})
         this.restrictedButton = ()=> cy.contains('Restricted',{timeout:2000})
         this.stopSharingButton = ()=> cy.get('button[class^="flex h-11 w-full"]'),
         this.buttonTextBefore = ()=> cy.get('button[class$="text-gray-80 shadow-sm "] span'),
@@ -85,14 +89,14 @@ class Drive{
         this.inviteOthersModal=()=> cy.get('[class^="w-full text-gray-100"]'),
         this.inviteOthersTitle=()=> cy.get('[class="flex items-center space-x-4"]')
         this.inviteOthersInput=()=> cy.get('[class="m flex w-full"] input', {timeout: 2000})
-        this.inviteButton=()=> cy.get('[class$="text-white shadow-sm "]').last()
-        this.invitationSentSuccessSign=()=> cy.get('[class="flex-1 whitespace-pre break-words text-gray-80 line-clamp-2"]', {timeout: 5000})
+        this.inviteButton=()=> cy.get('[class$="opacity-100 scale-100"] button').contains('Invite')
+        this.invitationSentSuccessSign=()=> cy.get('[class="opacity-100 scale-100"]', {timeout: 15000})
         this.readerEditorDropdown=()=> cy.get('[name=userRole]')
         this.notifyUsersWrapper=()=> cy.get('[class^="mt-2.5"]')
         this.notifyUsersTitle=()=> cy.get('[class="ml-2 text-base font-medium"]')
         this.notifyUsersCheckbox=()=> cy.get('div')
         this.editor_readerDropdown=()=> cy.get('[class$="ctive:bg-gray-1 text-gray-80 shadow-sm "]')
-        this.readerOptionButton=()=> cy.get('[role="option"]').last()
+        this.readerOptionButton=()=> cy.get('[aria-selected="false"]', {timeout:1000})
 
         //stop sharing modal
         this.stopSharingModal=()=> cy.get('[class^="w-full text-gray-100 max-w-sm"]'),
@@ -119,12 +123,15 @@ class Drive{
         this.newFolderModalTitle=()=> cy.get('[class$="text-gray-100"]'),
         this.newFolderNameInput=()=> cy.get('[class="relative"] input'),
         this.submitNewFolderName=()=> cy.get('[type="submit"]'),
-        this.folders=()=> cy.get('[data-test="file-list-folder"]'),
-        this.folderNames =()=> cy.get('span[data-test="folder-name"]'),
+        this.folders=()=> cy.get('[data-test="file-list-folder"]',{timeout: 1000}),
+        this.folderNames =()=> cy.get('span[data-test="folder-name"]', {timeout:2000}),
 
         //SHARED SECTION
         this.sharedPageButton=()=> cy.get('[href="/app/shared"]')
         
+    }
+    closeModal2(){
+        this.closeModalButton2().click()
     }
 
     async clickUploadButton(){
@@ -172,9 +179,11 @@ class Drive{
             })  
     }
     selectFolderandRightClick(folder:string){
+        this.folderNames().should('be.visible') 
         return this.folderNames().each(($fols, index)=>{
             if($fols.text()===folder){
-                this.folders().eq(index).rightclick()
+                cy.wait(1500)
+                this.folders().eq(index).should('exist').rightclick()
                 this.folderNames().eq(index).then((name)=>{
                         return Cypress.env('folderName',name.text())
                     })
@@ -210,8 +219,9 @@ class Drive{
         })
     }
     async clickRestrictedButtonOption(){
-        this.restrictedButton().should('be.enabled').click()
-        this.buttonTextAfter()
+        this.generalAccessOptions().within(()=>{
+            this.restrictedButton().should('be.enabled').click()
+        })
     }
     async clickPublicButtonOption(){
         this.publicButton().click()
