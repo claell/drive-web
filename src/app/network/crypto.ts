@@ -95,7 +95,10 @@ export function encryptReadable(readable: ReadableStream<Uint8Array>, cipher: Ci
  * @param cipher Cipher used to encrypt the content
  * @returns A readable whose output is the encrypted content of the source stream
  */
-export function encryptReadablePull(readable: ReadableStream<Uint8Array>, cipher: Cipher): ReadableStream<Uint8Array> {
+export function encryptReadablePull(
+  readable: ReadableStream<Uint8Array>,
+  encrypter: TransformStream<Uint8Array>
+): ReadableStream<Uint8Array> {
   const reader = readable.getReader();
 
   return new ReadableStream({
@@ -104,17 +107,17 @@ export function encryptReadablePull(readable: ReadableStream<Uint8Array>, cipher
       const status = await reader.read();
 
       if (!status.done) {
-        controller.enqueue(cipher.update(status.value));
+        controller.enqueue(status.value);
       } else {
         controller.close();
       }
     },
-  });
+  }).pipeThrough(encrypter);
 }
 
 export function encryptStreamInParts(
   plainFile: { size: number; stream(): ReadableStream<Uint8Array> },
-  cipher: Cipher,
+  encrypter: TransformStream<Uint8Array>,
   parts: number,
 ): ReadableStream<Uint8Array> {
   // We include a marginChunkSize because if we split the chunk directly, there will always be one more chunk left, this will cause a mismatch with the urls provided
@@ -122,7 +125,75 @@ export function encryptStreamInParts(
   const chunkSize = plainFile.size / parts + marginChunkSize;
   const readableFileChunks = streamFileIntoChunks(plainFile.stream(), chunkSize);
 
-  return encryptReadablePull(readableFileChunks, cipher);
+  return encryptReadablePull(readableFileChunks, encrypter);
+}
+
+export function convertKeyToCryptoKey(rawKey: Uint8Array): Promise<CryptoKey> {
+  // `window` object does not exist in a worker
+  return self.crypto.subtle.importKey(
+    'raw',
+    rawKey,
+    { name: 'AES-CTR' }, // Algoritmo
+    false, // La clave no es extractable
+    ['encrypt', 'decrypt'] // Permitir operaciones de cifrado y descifrado
+  );
+}
+
+export async function getAES256Cipher(
+  rawKey: Uint8Array,
+  iv: Uint8Array,
+): Promise<TransformStream<Uint8Array, Uint8Array>> {
+  const key = await convertKeyToCryptoKey(rawKey);
+
+  return new TransformStream<Uint8Array, Uint8Array>({
+    async transform(chunk, controller) {
+      const encryptedChunk = await self.crypto.subtle.encrypt(
+        {
+          name: 'AES-CTR',
+          counter: iv,
+          length: 128, // Este es el número de bits del contador que se incrementarán, ajustar según necesidad
+        },
+        key,
+        chunk
+      );
+
+      controller.enqueue(new Uint8Array(encryptedChunk));
+    }
+  });
+}
+
+export async function getNativeEncryptedFile(
+  plainFile: { stream(): ReadableStream<Uint8Array> },
+  rawKey: Uint8Array,
+  iv: Uint8Array,
+): Promise<[Blob, string]> {
+  const hasher = new Sha256();
+  const blobParts: ArrayBuffer[] = [];
+
+  const cipher = await getAES256Cipher(rawKey, iv);
+  const readable = plainFile.stream().pipeThrough(cipher).getReader();
+
+  let done = false;
+
+  while (!done) {
+    const status = await readable.read();
+
+    if (!status.done) {
+      hasher.process(status.value);
+      blobParts.push(status.value);
+    }
+
+    done = status.done;
+  }
+
+  hasher.finish();
+
+  return [
+    new Blob(blobParts, { type: 'application/octet-stream' }),
+    createHash('ripemd160')
+      .update(Buffer.from(hasher.result as Uint8Array))
+      .digest('hex'),
+  ];
 }
 
 export async function getEncryptedFile(

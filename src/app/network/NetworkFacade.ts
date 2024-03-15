@@ -5,7 +5,7 @@ import { validateMnemonic } from 'bip39';
 import { uploadFile, uploadMultipartFile } from '@internxt/sdk/dist/network/upload';
 import { downloadFile } from '@internxt/sdk/dist/network/download';
 
-import { getEncryptedFile, encryptStreamInParts, processEveryFileBlobReturnHash } from './crypto';
+import { getEncryptedFile, encryptStreamInParts, processEveryFileBlobReturnHash, convertKeyToCryptoKey, getAES256Cipher, getNativeEncryptedFile } from './crypto';
 import { DownloadProgressCallback, getDecryptedStream } from './download';
 import { uploadFileBlob, UploadProgressCallback } from './upload';
 import { buildProgressStream } from 'app/core/services/stream.service';
@@ -84,8 +84,7 @@ export class NetworkFacade {
       mnemonic,
       file.size,
       async (algorithm, key, iv) => {
-        const cipher = createCipheriv('aes-256-ctr', key as Buffer, iv as Buffer);
-        const [encryptedFile, hash] = await getEncryptedFile(file, cipher);
+        const [encryptedFile, hash] = await getNativeEncryptedFile(file, key as Buffer, iv as Buffer);
 
         fileToUpload = encryptedFile;
         fileHash = hash;
@@ -135,7 +134,8 @@ export class NetworkFacade {
     const fileParts: { PartNumber: number; ETag: string }[] = [];
 
     const encryptFile: EncryptFileFunction = async (algorithm, key, iv) => {
-      const cipher = createCipheriv('aes-256-ctr', key as Buffer, iv as Buffer);
+      // const cipher = createCipheriv('aes-256-ctr', key as Buffer, iv as Buffer);
+      const cipher = await getAES256Cipher(key as Uint8Array, iv as Uint8Array);
       fileReadable = encryptStreamInParts(file, cipher, options.parts);
     };
 
