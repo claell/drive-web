@@ -19,6 +19,8 @@ interface UISliceState {
   isNewsletterDialogOpen: boolean;
   isSurveyDialogOpen: boolean;
   isFileSizeLimitDialogOpen: boolean;
+  isShareItemsLimitDialogOpen: boolean;
+  isShareItemInvitationsLimitDialogOpen: boolean;
   isReachedPlanLimitDialogOpen: boolean;
   isSharedFolderTooBigDialogOpen: boolean;
   isShareItemDialogOpen: boolean;
@@ -56,6 +58,8 @@ const initialState: UISliceState = {
   isNewsletterDialogOpen: false,
   isSurveyDialogOpen: false,
   isFileSizeLimitDialogOpen: false,
+  isShareItemsLimitDialogOpen: false,
+  isShareItemInvitationsLimitDialogOpen: false,
   isReachedPlanLimitDialogOpen: false,
   isSharedFolderTooBigDialogOpen: false,
   isShareItemDialogOpen: false,
@@ -130,6 +134,12 @@ export const uiSlice = createSlice({
     },
     setIsFileSizeLimitDialogOpen: (state: UISliceState, action: PayloadAction<boolean>) => {
       state.isFileSizeLimitDialogOpen = action.payload;
+    },
+    setIsShareItemsLimitDialogOpen: (state: UISliceState, action: PayloadAction<boolean>) => {
+      state.isShareItemsLimitDialogOpen = action.payload;
+    },
+    setIsShareItemInvitationsLimitDialogOpen: (state: UISliceState, action: PayloadAction<boolean>) => {
+      state.isShareItemInvitationsLimitDialogOpen = action.payload;
     },
     setIsSharedFolderTooBigDialogOpen: (state: UISliceState, action: PayloadAction<boolean>) => {
       state.isSharedFolderTooBigDialogOpen = action.payload;

@@ -3,7 +3,11 @@ import navigationService from '../../../core/services/navigation.service';
 import { AppView } from '../../../core/types';
 import { useAppSelector } from '../../../store/hooks';
 import { uiActions } from '../../../store/slices/ui';
+import { bytesToString } from '../../services/size.service';
 import FileSizeLimitDialog from './FileSizeLimitDialog';
+
+// HARDCODED UNTIL API IS IMPLEMENTED
+const SIZE_LIMIT = 1 * 1024 * 1024 * 1024;
 
 const FileSizeLimitDialogContainer = () => {
   const dispatch = useDispatch();
@@ -20,6 +24,7 @@ const FileSizeLimitDialogContainer = () => {
       onSeePlansButtonClicked={onSeePlansButtonClicked}
       onClose={onClose}
       isLoading={false}
+      sizeLimit={bytesToString(SIZE_LIMIT)}
     />
   );
 };
