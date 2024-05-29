@@ -1,6 +1,6 @@
 import { binaryStreamToBlob } from '../../../core/services/stream.service';
-import { getEnvironmentConfig } from '../network.service';
 import { Downloadable, downloadFile, NetworkCredentials } from '../../../network/download';
+import { getEnvironmentConfig } from '../network.service';
 
 type FetchFileBlobOptions = {
   updateProgressCallback: (progress: number) => void;
@@ -25,11 +25,12 @@ export default async function fetchFileBlob(
     mnemonic: mnemonic ? mnemonic : encryptionKey,
     options: {
       notifyProgress: (totalBytes, downloadedBytes) => {
+        console.log('downloadedBytes', downloadedBytes);
         options.updateProgressCallback(downloadedBytes / totalBytes);
       },
       abortController: options.abortController,
     },
   });
-
+  console.log(fileStream);
   return binaryStreamToBlob(fileStream);
 }

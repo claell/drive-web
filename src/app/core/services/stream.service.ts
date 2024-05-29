@@ -3,19 +3,21 @@ type BinaryStream = ReadableStream<Uint8Array>;
 export async function binaryStreamToBlob(stream: BinaryStream, mimeType?: string): Promise<Blob> {
   const reader = stream.getReader();
   const slices: Uint8Array[] = [];
-
+  console.log('binaryStreamToBlob');
   let finish = false;
 
   while (!finish) {
     const { done, value } = await reader.read();
 
+    console.log('done', done);
     if (!done) {
       slices.push(value as Uint8Array);
     }
+    console.log('slices', slices);
 
     finish = done;
   }
-
+  console.log('finished binaryStreamToBlob');
   return new Blob(slices, mimeType ? { type: mimeType } : {});
 }
 
@@ -32,7 +34,7 @@ export function buildProgressStream(source: BinaryStream, onRead: (readBytes: nu
       } else {
         readBytes += (status.value as Uint8Array).length;
 
-        onRead(readBytes);
+        // onRead(readBytes);
         controller.enqueue(status.value);
       }
     },

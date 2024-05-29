@@ -378,10 +378,10 @@ async function downloadFolderAsZip(
     options?.destination ||
     new FlatFolderZip(rootFolder.name, {
       progress(loadedBytes) {
-        if (!totalSizeIsReady) {
-          return;
-        }
-        updateProgress(Math.min(loadedBytes / totalSize, 1));
+        // if (!totalSizeIsReady) {
+        //   return;
+        // }
+        // updateProgress(Math.min(loadedBytes / totalSize, 1));
       },
     });
 
@@ -413,11 +413,14 @@ async function downloadFolderAsZip(
           const lruFilesCacheManager = await LRUFilesCacheManager.getInstance();
           const cachedFile = await lruFilesCacheManager.get(file.id.toString());
           const isCachedFileOlder = checkIfCachedSourceIsOlder({ cachedFile, file });
-
+          if (cachedFile) console.log('cachedFile', cachedFile);
           if (cachedFile?.source && !isCachedFileOlder) {
-            updateProgress(1);
+            console.log('isCachedFileOlder', isCachedFileOlder);
+
+            updateProgress(0);
             return cachedFile.source.stream();
           }
+          console.log('noCachedFile', cachedFile);
 
           trackingDownloadProperties = {
             process_identifier: analyticsProcessIdentifier,
@@ -431,10 +434,12 @@ async function downloadFolderAsZip(
             band_utilization: 0,
           };
           analyticsService.trackFileDownloadStarted(trackingDownloadProperties);
+          console.log('after trackFileDownloadStarted');
 
           const creds = options?.credentials
             ? (options.credentials as Record<'user' | 'pass', string>)
             : { user: user.bridgeUser, pass: user.userId };
+          console.log('creds', creds);
 
           const mnemonic = options?.mnemonic ? options?.mnemonic : user.mnemonic;
           const downloadedFileStream = await downloadFile({
@@ -444,8 +449,11 @@ async function downloadFolderAsZip(
             mnemonic: mnemonic,
           });
           analyticsService.trackFileDownloadCompleted(trackingDownloadProperties);
+          console.log('mnemonic', mnemonic);
 
           const sourceBlob = await binaryStreamToBlob(downloadedFileStream);
+          console.log('sourceBlob', sourceBlob);
+
           await updateDatabaseFileSourceData({
             folderId: file.folderId,
             sourceBlob,
@@ -460,8 +468,9 @@ async function downloadFolderAsZip(
       );
 
       totalSize += files.reduce((a, f) => f.size + a, 0);
-
+      console.log('totalSize', totalSize);
       const folders = await addAllFoldersToZip(folderToDownload.name, foldersIterator(folderToDownload.folderId), zip);
+      console.log('folders', folders);
 
       pendingFolders.push(
         ...folders.map((f) => {
@@ -478,7 +487,10 @@ async function downloadFolderAsZip(
       await zip.close();
     }
   } catch (err) {
+    console.log({ err });
     const castedError = errorService.castError(err);
+    console.log({ castedError });
+
     analyticsService.trackFileDownloadError({
       ...trackingDownloadProperties,
       error_message_user: 'Error downloading folder',
@@ -487,6 +499,8 @@ async function downloadFolderAsZip(
     });
     console.error('ERROR WHILE DOWNLOADING FOLDER', castedError);
     zip.abort();
+    console.log('ERROR WHILE DOWNLOADING FOLDER');
+
     throw castedError;
   }
 }

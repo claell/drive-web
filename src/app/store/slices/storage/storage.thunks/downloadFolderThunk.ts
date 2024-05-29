@@ -1,19 +1,19 @@
 import { ActionReducerMapBuilder, createAsyncThunk } from '@reduxjs/toolkit';
 
-import { StorageState } from '../storage.model';
-import { RootState } from '../../..';
-import errorService from 'app/core/services/error.service';
-import notificationsService, { ToastType } from 'app/notifications/services/notifications.service';
-import { t } from 'i18next';
-import { TaskStatus } from 'app/tasks/types';
-import tasksService from 'app/tasks/services/tasks.service';
-import AppError from 'app/core/types';
-import { DriveFileData, DriveFolderData } from '../../../../drive/types';
-import folderService from 'app/drive/services/folder.service';
-import downloadFolderUsingBlobs from '../../../../drive/services/download.service/downloadFolder/downloadFolderUsingBlobs';
-import { isFirefox } from 'react-device-detect';
-import { ConnectionLostError } from '../../../../network/requests';
 import { Iterator } from 'app/core/collections';
+import errorService from 'app/core/services/error.service';
+import AppError from 'app/core/types';
+import folderService from 'app/drive/services/folder.service';
+import notificationsService, { ToastType } from 'app/notifications/services/notifications.service';
+import tasksService from 'app/tasks/services/tasks.service';
+import { TaskStatus } from 'app/tasks/types';
+import { t } from 'i18next';
+import { isFirefox } from 'react-device-detect';
+import { RootState } from '../../..';
+import downloadFolderUsingBlobs from '../../../../drive/services/download.service/downloadFolder/downloadFolderUsingBlobs';
+import { DriveFileData, DriveFolderData } from '../../../../drive/types';
+import { ConnectionLostError } from '../../../../network/requests';
+import { StorageState } from '../storage.model';
 
 interface DownloadFolderThunkOptions {
   taskId: string;
@@ -84,6 +84,7 @@ export const downloadFolderThunk = createAsyncThunk<void, DownloadFolderThunkPay
       if (isFirefox) {
         await downloadFolderUsingBlobs({ folder, updateProgressCallback });
       } else {
+        console.log('downloadFolderAsZip');
         await folderService.downloadFolderAsZip(
           folder.id,
           folder.name,
@@ -118,14 +119,14 @@ export const downloadFolderThunk = createAsyncThunk<void, DownloadFolderThunkPay
       }
 
       (abortController as { abort: (message: string) => void }).abort((err as Error).message);
-
-      errorService.reportError(err, {
-        extra: { folder: folder.name, bucket: folder.bucket, folderParentId: folder.parentId },
-      });
-
+      console.log({ err });
+      // errorService.reportError(err, {
+      //   extra: { folder: folder.name, bucket: folder.bucket, folderParentId: folder.parentId },
+      // });
+      console.log('HA HABIDO UN ERROR');
       const castedError = errorService.castError(err);
       const task = tasksService.findTask(options.taskId);
-
+      console.log(task);
       if (task?.status !== TaskStatus.Cancelled) {
         tasksService.updateTask({
           taskId: options.taskId,

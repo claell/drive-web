@@ -16,13 +16,16 @@ async function addFilesToZip<T extends File>(
 
   const addFileToZip = async (file: T) => {
     const fileStream = await downloadFile(file);
+    console.log('fileStream', fileStream);
     zip.addFile(path + '/' + file.name + (file.type ? '.' + file.type : ''), fileStream);
   };
 
   let pack;
   let moreFiles = true;
   while (moreFiles) {
+    console.log({ moreFiles });
     pack = await iterator.next();
+    console.log({ pack });
 
     const files = pack.value;
     moreFiles = !pack.done;
@@ -32,6 +35,7 @@ async function addFilesToZip<T extends File>(
       await addFileToZip(file);
     }
   }
+  console.log('allFiles');
   return { files: allFiles, token: pack?.token ?? '' };
 }
 
@@ -52,6 +56,7 @@ async function addAllSharedFilesToZip(
   zip: FlatFolderZip,
 ): Promise<{ files: SharedFiles[]; token: string }> {
   const { files, token } = await addFilesToZip<SharedFiles>(currentAbsolutePath, downloadFile, iterator, zip);
+  console.log('files', files);
   return { files, token: token ?? '' };
 }
 

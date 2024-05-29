@@ -1,25 +1,25 @@
 import { Environment } from '@internxt/inxt-js';
-import { createDecipheriv, Decipher } from 'crypto';
 import * as Sentry from '@sentry/react';
+import { createDecipheriv, Decipher } from 'crypto';
 
-import { getFileInfoWithAuth, getFileInfoWithToken, getMirrors, Mirror } from './requests';
-import { buildProgressStream, joinReadableBinaryStreams } from 'app/core/services/stream.service';
-import { Abortable } from './Abortable';
-import fetchFileBlob from 'app/drive/services/download.service/fetchFileBlob';
 import localStorageService from 'app/core/services/local-storage.service';
+import { buildProgressStream, joinReadableBinaryStreams } from 'app/core/services/stream.service';
+import fetchFileBlob from 'app/drive/services/download.service/fetchFileBlob';
+import { Abortable } from './Abortable';
+import { getFileInfoWithAuth, getFileInfoWithToken, getMirrors, Mirror } from './requests';
 
-import { SerializablePhoto } from 'app/store/slices/photos';
-import { getEnvironmentConfig } from 'app/drive/services/network.service';
 import { FileVersionOneError } from '@internxt/sdk/dist/network/download';
 import { ErrorWithContext } from '@internxt/sdk/dist/network/errors';
-import downloadFileV2 from './download/v2';
+import { getEnvironmentConfig } from 'app/drive/services/network.service';
+import { SerializablePhoto } from 'app/store/slices/photos';
+import errorService from '../core/services/error.service';
 import {
   getDatabasePhotosPreviewData,
   getDatabasePhotosSourceData,
   updateDatabasePhotosPreviewData,
   updateDatabasePhotosSourceData,
 } from '../drive/services/database.service';
-import errorService from '../core/services/error.service';
+import downloadFileV2 from './download/v2';
 
 export type DownloadProgressCallback = (totalBytes: number, downloadedBytes: number) => void;
 export type Downloadable = { fileId: string; bucketId: string };
@@ -203,7 +203,7 @@ async function _downloadFile(params: IDownloadParams): Promise<ReadableStream<Ui
   } else {
     throw new Error('Download error 1');
   }
-
+  console.log({ metadata });
   const { mirrors, fileMeta } = metadata;
   const downloadUrls: string[] = mirrors.map((m) => m.url);
 
@@ -216,6 +216,7 @@ async function _downloadFile(params: IDownloadParams): Promise<ReadableStream<Ui
   } else if (params.mnemonic) {
     key = await generateFileKey(params.mnemonic, bucketId, index);
   } else {
+    console.log('error');
     throw new Error('Download error code 1');
   }
 

@@ -1,19 +1,19 @@
-import { DriveFileData, DriveFolderData, DriveFolderMetadataPayload, DriveItemData, FolderTree } from '../../types';
-import errorService from '../../../core/services/error.service';
 import { aes } from '@internxt/lib';
+import analyticsService from '../../../analytics/services/analytics.service';
+import errorService from '../../../core/services/error.service';
 import httpService from '../../../core/services/http.service';
 import { DevicePlatform } from '../../../core/types';
-import analyticsService from '../../../analytics/services/analytics.service';
+import { DriveFileData, DriveFolderData, DriveFolderMetadataPayload, DriveItemData, FolderTree } from '../../types';
 
-import localStorageService from '../../../core/services/local-storage.service';
-import { UserSettings } from '@internxt/sdk/dist/shared/types/userSettings';
 import { StorageTypes } from '@internxt/sdk/dist/drive';
 import { RequestCanceler } from '@internxt/sdk/dist/shared/http/types';
-import { SdkFactory } from '../../../core/factory/sdk';
+import { UserSettings } from '@internxt/sdk/dist/shared/types/userSettings';
 import { Iterator } from 'app/core/collections';
 import { FlatFolderZip } from 'app/core/services/zip.service';
 import { downloadFile } from 'app/network/download';
 import { t } from 'i18next';
+import { SdkFactory } from '../../../core/factory/sdk';
+import localStorageService from '../../../core/services/local-storage.service';
 
 export interface IFolders {
   bucket: string;
@@ -249,7 +249,7 @@ async function downloadFolderAsZip(
   const pendingFolders: FolderRef[] = [rootFolder];
   let totalSize = 0;
   let totalSizeIsReady = false;
-
+  console.log('downloadFolderAsZip');
   const zip = new FlatFolderZip(rootFolder.name, {
     progress(loadedBytes) {
       if (!totalSizeIsReady) {
