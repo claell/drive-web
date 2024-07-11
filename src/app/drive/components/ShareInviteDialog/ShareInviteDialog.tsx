@@ -109,7 +109,11 @@ const ShareInviteDialog = (props: ShareInviteDialogProps): JSX.Element => {
       publicKey = publicKeyResponse.publicKey;
     } catch (error) {
       if ((error as AppError)?.status !== HTTP_CODES.NOT_FOUND) {
-        errorService.reportError(error);
+        errorService.reportError(error, {
+          extra: {
+            view: 'ShareInviteDialog.tsx',
+          },
+        });
       }
     }
     return publicKey;

@@ -72,7 +72,8 @@ export const handleRepeatedUploadingFiles = (
   dispatch: Dispatch,
 ): (DriveItemData | File)[] => {
   const { filesRepeated, repeatedFilesInDrive, unrepeatedFiles } = checkRepeatedNameFiles(items, files);
-
+  console.log({ filesRepeated });
+  // añadir endpoint para comprobar si existe el archivo
   const hasRepeatedNameFiles = !!filesRepeated.length;
   if (hasRepeatedNameFiles) {
     dispatch(storageActions.setFilesToRename(filesRepeated));

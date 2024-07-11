@@ -961,7 +961,7 @@ const countTotalItemsInIRoot = (rootList: IRoot[]) => {
 const uploadItems = async (props: DriveExplorerProps, rootList: IRoot[], files: File[]) => {
   const { dispatch, currentFolderId, onDragAndDropEnd, items } = props;
   const countTotalItemsToUpload: number = files.length + countTotalItemsInIRoot(rootList);
-
+  console.log({ files });
   if (countTotalItemsToUpload < UPLOAD_ITEMS_LIMIT) {
     if (files.length) {
       errorService.addBreadcrumb({
@@ -973,7 +973,10 @@ const uploadItems = async (props: DriveExplorerProps, rootList: IRoot[], files: 
           itemsDragged: items,
         },
       });
+      console.log({ files });
+
       const unrepeatedUploadedFiles = handleRepeatedUploadingFiles(files, items, dispatch) as File[];
+      console.log({ unrepeatedUploadedFiles });
       // files where dragged directly
       await dispatch(
         storageThunks.uploadItemsThunk({

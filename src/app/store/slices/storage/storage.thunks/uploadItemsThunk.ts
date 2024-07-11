@@ -110,7 +110,7 @@ const prepareFilesToUpload = async ({
     const [parentFolderContentPromise] = storageClient.getFolderContentByUuid(parentFolderId, false, workspaceToken);
     parentFolderContent = await parentFolderContentPromise;
   }
-
+  console.log({ parentFolderContent });
   let zeroLengthFilesNumber = 0;
 
   for (const file of files) {
@@ -121,10 +121,14 @@ const prepareFilesToUpload = async ({
     const { filename, extension } = itemUtils.getFilenameAndExt(file.name);
     let fileContent;
     let finalFilename = filename;
+    console.log({ filename });
+    console.log({ extension });
+    // const parsedParentFolderContentFiles = parentFolderContent.files.map((file) => ({ ...file, name: file.plainName }));
 
     if (!disableDuplicatedNamesCheck) {
       const [, , renamedFilename] = itemUtils.renameIfNeeded(parentFolderContent.files, filename, extension);
       finalFilename = renamedFilename;
+      console.log({ renamedFilename });
       fileContent = renameFile(file, renamedFilename);
     } else {
       fileContent = renameFile(file, filename);
