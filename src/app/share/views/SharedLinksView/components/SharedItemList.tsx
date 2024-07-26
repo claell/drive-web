@@ -3,6 +3,7 @@ import { t } from 'i18next';
 import { useCallback } from 'react';
 import dateService from '../../../../core/services/date.service';
 import { OrderDirection } from '../../../../core/types';
+import { shareListItemSkinSkeleton } from '../../../../drive/components/DriveExplorer/DriveExplorerList/DriveListSkinSkeleton';
 import iconService from '../../../../drive/services/icon.service';
 import sizeService from '../../../../drive/services/size.service';
 import { DriveFileData } from '../../../../drive/types';
@@ -10,16 +11,6 @@ import Avatar from '../../../../shared/components/Avatar';
 import List from '../../../../shared/components/List';
 import { ListItemMenu } from '../../../../shared/components/List/ListItem';
 import { AdvancedSharedItem } from '../../../types';
-
-const skinSkeleton = [
-  <div key="1" className="flex flex-row items-center space-x-4">
-    <div key="2" className="h-8 w-8 rounded-md bg-gray-5" />
-    <div key="3" className="h-4 w-40 rounded bg-gray-5" />
-  </div>,
-  <div key="4" className="h-4 w-20 rounded bg-gray-5" />,
-  <div key="5" className="h-4 w-24 rounded bg-gray-5" />,
-  <div key="6" className="h-4 w-20 rounded bg-gray-5" />,
-];
 
 export type OrderField = 'name' | 'updatedAt' | 'createdAt' | 'size';
 
@@ -119,12 +110,13 @@ export const SharedItemList = ({
         },
       ]}
       items={shareItems}
-      isLoading={isLoading}
+      isLoading={true}
+      forceLoading={true}
       disableKeyboardShortcuts={disableKeyboardShortcuts}
       onClick={onClickItem}
       onDoubleClick={onItemDoubleClicked}
       itemComposition={itemComposition}
-      skinSkeleton={skinSkeleton}
+      skinSkeleton={shareListItemSkinSkeleton}
       emptyState={emptyStateElement}
       onNextPage={onNextPage}
       hasMoreItems={hasMoreItems}

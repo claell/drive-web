@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { SdkFactory } from '../../../core/factory/sdk';
 import dateService from '../../../core/services/date.service';
 import { contextMenuSelectedBackupItems } from '../../../drive/components/DriveExplorer/DriveExplorerList/DriveItemContextMenu';
+import { driveListItemSkinSkeleton } from '../../../drive/components/DriveExplorer/DriveExplorerList/DriveListSkinSkeleton';
 import DriveListItemSkeleton from '../../../drive/components/DriveListItemSkeleton/DriveListItemSkeleton';
 import { deleteFile } from '../../../drive/services/file.service';
 import { deleteBackupDeviceAsFolder } from '../../../drive/services/folder.service';
@@ -104,7 +105,7 @@ export default function BackupsAsFoldersList({
             header={[
               {
                 label: translate('drive.list.columns.name'),
-                width: 'flex-1 min-w-activity truncate cursor-pointer',
+                width: 'flex-1 min-w-activity w-full truncate cursor-pointer mr-1',
                 name: 'name',
                 orderable: true,
                 defaultDirection: 'ASC',
@@ -162,7 +163,7 @@ export default function BackupsAsFoldersList({
               onItemSelected([...unselectedDevices, { device: item, isSelected: true }]);
             }}
             onDoubleClick={onClick}
-            skinSkeleton={Skeleton}
+            skinSkeleton={driveListItemSkinSkeleton}
             emptyState={
               <Empty
                 icon={<img className="w-36" alt="" src={folderEmptyImage} />}

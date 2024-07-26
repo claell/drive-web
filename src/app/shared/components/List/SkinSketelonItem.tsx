@@ -6,7 +6,7 @@ interface SkinSkeletonProps {
 
 export default function SkinSkeletonItem({ skinSkeleton, columns }: SkinSkeletonProps): JSX.Element {
   return (
-    <div className="group relative flex h-14 shrink-0 animate-pulse flex-row items-center pl-14 pr-5">
+    <div className="group relative flex h-14 shrink-0 animate-pulse flex-row items-center pl-14">
       {new Array(columns.length).fill(0).map((col, i) => (
         <div
           key={`${col}-${i}`}

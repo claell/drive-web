@@ -35,6 +35,7 @@ import {
   contextMenuWorkspaceFile,
   contextMenuWorkspaceFolder,
 } from './DriveItemContextMenu';
+import { driveListItemSkinSkeleton } from './DriveListSkinSkeleton';
 
 interface DriveExplorerListProps {
   folderId: string;
@@ -501,12 +502,12 @@ const DriveExplorerList: React.FC<DriveExplorerListProps> = memo((props) => {
           checkboxDataCy="driveListHeaderCheckbox"
           disableKeyboardShortcuts={props.disableKeyboardShortcuts || props.showStopSharingConfirmation}
           items={props.items}
-          isLoading={isLoading}
-          forceLoading={forceLoading}
+          isLoading={true}
+          forceLoading={true}
           itemComposition={[(item) => createDriveListItem(item, props.isTrash)]}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          skinSkeleton={skinSkeleton}
+          skinSkeleton={driveListItemSkinSkeleton}
           emptyState={<></>}
           onNextPage={onEndOfScroll}
           onEnterPressed={(driveItem) => {
@@ -562,12 +563,3 @@ export default connect((state: RootState) => ({
     state.ui.isItemDetailsDialogOpen ||
     state.ui.isPreferencesDialogOpen,
 }))(DriveExplorerList);
-
-const skinSkeleton = [
-  <div className="flex flex-row items-center space-x-4">
-    <div className="h-8 w-8 rounded-md bg-gray-5" />
-  </div>,
-  <div className="h-4 w-64 rounded bg-gray-5" />,
-  <div className="ml-3 h-4 w-24 rounded bg-gray-5" />,
-  <div className="ml-4 h-4 w-20 rounded bg-gray-5" />,
-];
