@@ -106,7 +106,7 @@ export default async function downloadFolderUsingStreamSaver({
           type: 'uint8array',
           streamFiles: true,
           compression: 'DEFLATE',
-        }) as internal.Readable;
+        }) as unknown as internal.Readable;
         folderStream
           ?.on('data', (chunk: Buffer) => {
             writer.write(chunk);

@@ -27,7 +27,7 @@ export default async function downloadFolderUsingBlobs({
   const zip = new JSZip();
   const { tree, folderDecryptedNames, fileDecryptedNames, size } = await folderService.fetchFolderTree(folder.uuid);
   let downloadedSize = 0;
-
+  console.log({ size });
   decryptedCallback?.();
 
   // * Renames files iterating over folders
@@ -62,11 +62,13 @@ export default async function downloadFolderUsingBlobs({
       );
       const fileBlob = await fileBlobPromise;
 
-      downloadedSize += file.size;
+      console.log('fileBlob', fileBlob);
+      downloadedSize += parseInt(file.size.toString());
+      console.log('downloadedSize', downloadedSize);
 
       currentFolderZip?.file(displayFilename, fileBlob);
     }
-
+    console.log('currentFolderZip', currentFolderZip);
     // * Adds current folder folders to pending
     pendingFolders.push(
       ...folders.map((data) => ({
@@ -75,10 +77,16 @@ export default async function downloadFolderUsingBlobs({
       })),
     );
   }
-
-  const folderContent = await zip.generateAsync({ type: 'blob' }).then((content) => {
-    fileDownload(content, `${folder.name}.zip`, 'application/zip');
-  });
+  console.log('before folderContent');
+  const folderContent = await zip
+    .generateAsync({ type: 'blob' }, (metadata) => {
+      console.log('Progreso de compresión:', metadata.percent.toFixed(2) + '%');
+    })
+    .then((content) => {
+      console.log('content', content);
+      fileDownload(content, `${folder.name}.zip`, 'application/zip');
+    });
+  console.log('folderContent', folderContent);
 
   return folderContent;
 }

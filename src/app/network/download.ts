@@ -2,6 +2,7 @@ import { Environment } from '@internxt/inxt-js';
 import { createDecipheriv, Decipher } from 'crypto';
 
 import { buildProgressStream, joinReadableBinaryStreams } from 'app/core/services/stream.service';
+
 import { Abortable } from './Abortable';
 import { getFileInfoWithAuth, getFileInfoWithToken, getMirrors, Mirror } from './requests';
 
@@ -74,11 +75,11 @@ export function getDecryptedStream(
 
   const decryptedStream = new ReadableStream({
     async pull(controller) {
+      console.log('keepReading', keepReading);
       if (!keepReading) return;
 
       const reader = encryptedStream.getReader();
       const status = await reader.read();
-
       if (status.done) {
         controller.close();
       } else {

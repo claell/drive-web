@@ -87,6 +87,13 @@ export const downloadFolderThunk = createAsyncThunk<void, DownloadFolderThunkPay
 
       if (isFirefox) {
         await downloadFolderUsingBlobs({ folder, updateProgressCallback, isWorkspace: !!selectedWorkspace });
+        tasksService.updateTask({
+          taskId: options.taskId,
+          merge: {
+            status: TaskStatus.InProcess,
+            cancellable: false,
+          },
+        });
       } else {
         const existSelectedWorkspace = !!selectedWorkspace;
         const credentials = existSelectedWorkspace
@@ -113,7 +120,7 @@ export const downloadFolderThunk = createAsyncThunk<void, DownloadFolderThunkPay
           },
         );
       }
-
+      console.log('FINISHED DOWNLAODING FOLDER');
       tasksService.updateTask({
         taskId: options.taskId,
         merge: {
